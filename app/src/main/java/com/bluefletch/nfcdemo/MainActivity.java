@@ -1,9 +1,11 @@
 package com.bluefletch.nfcdemo;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -18,30 +20,36 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.UUID;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    private static String TAG = "NFCDEMO:"+MainActivity.class.getSimpleName();
-
+    private static String TAG = "NFCDEMO:" + MainActivity.class.getSimpleName();
+    private static final String BT_SOCKET_SCHEMA = "btsocket://";
+    private static final UUID svcUuid = UUID.randomUUID();
     NfcAdapter mNfcAdapter;
-
-    private SQLiteDatabase database;
     SqLiteHelper sqlHelper;
-
+    BluetoothAdapter bluetoothAdapter;
+    int port;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.i(TAG, "onCreate");
-        sqlHelper  = new SqLiteHelper(this);
-        database = sqlHelper.getWritableDatabase();
+        sqlHelper = new SqLiteHelper(this);
+
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         setContentView(R.layout.activity_main);
 
         Button beamData = findViewById(R.id.beamData);
-        beamData.setOnClickListener( _onBeamClick );
+        beamData.setOnClickListener(_onBeamClick);
 
         Button load = findViewById(R.id.load);
         load.setOnClickListener(_onAddMoney);
@@ -69,14 +77,14 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         Log.i(TAG, "onResume");
-        setDisplayText ( "onResume " + getIntent().getAction());
+        setDisplayText("onResume " + getIntent().getAction());
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processNFCData(getIntent());
         }
     }
 
-    private void processNFCData( Intent inputIntent ) {
+    private void processNFCData(Intent inputIntent) {
 
         Log.i(TAG, "processNFCData");
         Parcelable[] rawMessages =
@@ -92,27 +100,38 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            Log.i(TAG, "message size = " + messages.length);
-
             // only one message sent during the beam
             NdefMessage msg = (NdefMessage) rawMessages[0];
             // record 0 contains the MIME type, record 1 is the AAR, if present
-            String base = new String(msg.getRecords()[0].getPayload());
+            String btAddr = new String(msg.getRecords()[0].getPayload());
 
-            sqlHelper.addBalance( Integer.parseInt(base) );
+            Log.i(TAG, "remote BT Addr = " + btAddr);
 
-            displayCurrentBalance();
+            Uri remoteUri = Uri.parse(btAddr);
+            UUID serviceUuid = UUID.fromString(remoteUri.getPath().substring(1));
+            BluetoothDevice remoteDevice = bluetoothAdapter.getRemoteDevice(remoteUri.getAuthority());
+            try {
+                BluetoothSocket socket = remoteDevice.createInsecureRfcommSocketToServiceRecord(serviceUuid);
+                socket.connect();
 
+                while (socket.getInputStream().available() == 0) {}
+                byte[] b = new byte[socket.getInputStream().available()];
+                socket.getInputStream().read(b);
+
+                setDisplayText(new String(b));
+            } catch (IOException e) {
+                Log.e(TAG, "Not able to connect to BT device: " + btAddr);
+            }
         }
     }
 
-    private void displayCurrentBalance( ) {
-        setDisplayText("Current Money: " + sqlHelper.getCurrentBalance() );
+    private void displayCurrentBalance() {
+        setDisplayText("Current Money: " + sqlHelper.getCurrentBalance());
     }
 
-    private void setDisplayText( String text ) {
+    private void setDisplayText(String text) {
         TextView veiw = findViewById(R.id.viewdata);
-        if ( veiw != null ) {
+        if (veiw != null) {
             veiw.setText(text);
         }
     }
@@ -136,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             int addAmount = Integer.valueOf(loadAmount.getText().toString());
 
             sqlHelper.addBalance(addAmount);
-            setDisplayText("New Balance: " + sqlHelper.getCurrentBalance() );
+            setDisplayText("New Balance: " + sqlHelper.getCurrentBalance());
         }
     };
 
@@ -155,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void turnOnNfcBeam() {
         // Check for available NFC Adapter
-        if ( mNfcAdapter == null ) {
+        if (mNfcAdapter == null) {
             mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         }
         if (mNfcAdapter == null || !mNfcAdapter.isEnabled()) {
@@ -164,8 +183,30 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Register callback
-        mNfcAdapter.setNdefPushMessageCallback(_onNfcCreateCallback, this);
+        BluetoothServerSocket serverSocket;
+        try {
+            serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("santa_wallet", svcUuid);
+
+            Field socketField = BluetoothServerSocket.class.getDeclaredField("mSocket");
+            socketField.setAccessible(true);
+            BluetoothSocket tmpSocket = (BluetoothSocket)socketField.get(serverSocket);
+
+            Field portField = BluetoothSocket.class.getDeclaredField("mPort");
+            portField.setAccessible(true);
+            port = (Integer)portField.get(tmpSocket);
+
+//            mNfcAdapter.setNdefPushMessageCallback(_onNfcCreateCallback, this);
+
+            BluetoothSocket socket  = serverSocket.accept(100000);
+
+            OutputStream outputStream = socket.getOutputStream();
+            outputStream.write("10".getBytes());
+
+            setDisplayText("10000");
+        } catch (Exception e){
+            Log.e(TAG, "not able to listen on BT device", e);
+        }
+
     }
 
     private NfcAdapter.CreateNdefMessageCallback _onNfcCreateCallback = new NfcAdapter.CreateNdefMessageCallback() {
@@ -177,15 +218,16 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private NdefMessage createMessage() {
-        EditText editText = findViewById(R.id.send);
 
-        String text = editText.getText().toString();
-        sqlHelper.addBalance(-1 * Integer.parseInt(text) );
-        displayCurrentBalance();
-
+        StringBuilder btRequest = new StringBuilder(BT_SOCKET_SCHEMA)
+                .append(bluetoothAdapter.getAddress())
+                .append("/")
+                .append(svcUuid)
+                .append("?channel=" + port);
+        Log.i(TAG, btRequest.toString());
         NdefMessage msg = new NdefMessage(
                 new NdefRecord[] { NdefRecord.createMime(
-                        "application/com.bluefletch.nfcdemo.mimetype", text.getBytes())
+                        "application/com.bluefletch.nfcdemo.mimetype", btRequest.toString().getBytes())
                         /**
                          * The Android Application Record (AAR) is commented out. When a device
                          * receives a push with an AAR in it, the application specified in the AAR
