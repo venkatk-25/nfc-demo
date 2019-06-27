@@ -15,7 +15,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="279dp"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="215dp"
         android:text="Tap to Pay"
         android:textColor="#3F51B5"
         android:textColorHint="#C45757" />
@@ -27,7 +27,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="37dp"
-        android:layout_marginTop="252dp"
+        android:layout_marginTop="220dp"
         android:height="300dp"
         android:background="#CECFCF"
         android:ems="10"
@@ -44,7 +44,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="159dp"
-        android:layout_marginTop="509dp"
+        android:layout_marginTop="615dp"
         android:background="#CECFCF"
         android:ems="10"
         android:fontFamily="casual"
@@ -58,8 +58,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="509dp"
+        android:layout_marginTop="609dp"
         android:layout_marginEnd="273dp"
+        android:layout_marginStart="37dp"
         android:textColor="#3F51B5"
         android:text=" Load Wallet" />
 
@@ -92,15 +93,15 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="#3F51B5" />
 
-    <!--<TextView-->
-        <!--android:id="@+id/logs"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="#CECFCF"-->
-        <!--android:fontFamily="casual"-->
-        <!--android:layout_marginStart="25dp"-->
-        <!--android:layout_marginTop="250dp"-->
-        <!--android:width="350dp"-->
-        <!--android:height="200dp" />-->
+    <TextView
+        android:id="@+id/logs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#CECFCF"
+        android:fontFamily="casual"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="310dp"
+        android:width="340dp"
+        android:height="250dp" />
 
 </RelativeLayout>
