@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase database;
     SqLiteHelper sqlHelper;
 
+    private SQLiteDatabase logsDatabase;
+    LogSqLiteHelper logSqLiteHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
         sqlHelper  = new SqLiteHelper(this);
         database = sqlHelper.getWritableDatabase();
 
+        logSqLiteHelper  = new LogSqLiteHelper(this);
+        logsDatabase = sqlHelper.getWritableDatabase();
+
+        displayCurrentBalance();
+
         setContentView(R.layout.activity_main);
 
         Button beamData = findViewById(R.id.beamData);
@@ -45,9 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
         Button load = findViewById(R.id.load);
         load.setOnClickListener(_onAddMoney);
-
-        Button balance = findViewById(R.id.balance);
-        balance.setOnClickListener(_onGetBalance);
     }
 
 
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(TAG, "onNewIntent");
 
-        setDisplayText ( "onNewIntent " + intent.getAction());
+        displayCurrentBalance();
         if (intent != null && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             processNFCData(intent);
         }
@@ -69,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         Log.i(TAG, "onResume");
-        setDisplayText ( "onResume " + getIntent().getAction());
+        displayCurrentBalance();
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processNFCData(getIntent());
@@ -100,23 +104,51 @@ public class MainActivity extends AppCompatActivity {
             String base = new String(msg.getRecords()[0].getPayload());
 
             sqlHelper.addBalance( Integer.parseInt(base) );
-
             displayCurrentBalance();
+
+//            logSqLiteHelper.addLog("Received " + Integer.parseInt(base) + " by Tap. New Balance: " + sqlHelper.getCurrentBalance());
+//            displayCurrentLog();
+
+            resetBalance();
 
         }
     }
 
     private void displayCurrentBalance( ) {
-        setDisplayText("Current Money: " + sqlHelper.getCurrentBalance() );
+        displayBalance(sqlHelper.getCurrentBalance() );
     }
 
-    private void setDisplayText( String text ) {
-        TextView veiw = findViewById(R.id.viewdata);
-        if ( veiw != null ) {
-            veiw.setText(text);
+    private void displayBalance( int text ) {
+        TextView view = findViewById(R.id.balanceValue);
+        if ( view != null ) {
+            view.setText(Integer.toString(text));
         }
     }
 
+    private void resetBalance() {
+        TextView view = findViewById(R.id.send);
+        if ( view != null ) {
+            view.setText("");
+        }
+    }
+
+    private void resetLoadAmount() {
+        TextView view = findViewById(R.id.loadAmount);
+        if ( view != null ) {
+            view.setText("");
+        }
+    }
+
+//    private void displayLog( String text ) {
+//        TextView view = findViewById(R.id.logs);
+//        if ( view != null ) {
+//            view.setText(text);
+//        }
+//    }
+
+//    private void displayCurrentLog( ) {
+//        displayLog(logSqLiteHelper.getCurrentLogs() );
+//    }
 
     private View.OnClickListener _onBeamClick = new View.OnClickListener() {
         @Override
@@ -136,7 +168,12 @@ public class MainActivity extends AppCompatActivity {
             int addAmount = Integer.valueOf(loadAmount.getText().toString());
 
             sqlHelper.addBalance(addAmount);
-            setDisplayText("New Balance: " + sqlHelper.getCurrentBalance() );
+            displayCurrentBalance();
+
+//            logSqLiteHelper.addLog("Added " + addAmount + " to the Wallet. New Balance: " + sqlHelper.getCurrentBalance());
+//            displayCurrentLog();
+
+            resetLoadAmount();
         }
     };
 
@@ -183,6 +220,11 @@ public class MainActivity extends AppCompatActivity {
         sqlHelper.addBalance(-1 * Integer.parseInt(text) );
         displayCurrentBalance();
 
+//        logSqLiteHelper.addLog("Sent " + text + " by Tap. New Balance: " + sqlHelper.getCurrentBalance());
+//        displayCurrentLog();
+
+        resetBalance();
+
         NdefMessage msg = new NdefMessage(
                 new NdefRecord[] { NdefRecord.createMime(
                         "application/com.bluefletch.nfcdemo.mimetype", text.getBytes())
@@ -196,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                         */
                         //,NdefRecord.createApplicationRecord("com.example.android.beam")
                 });
+
         return msg;
     }
 
