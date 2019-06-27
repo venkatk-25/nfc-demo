@@ -1,6 +1,9 @@
 package com.bluefletch.nfcdemo;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -11,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,17 +26,28 @@ public class MainActivity extends AppCompatActivity {
 
     NfcAdapter mNfcAdapter;
 
+    private SQLiteDatabase database;
+    SqLiteHelper sqlHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.i(TAG, "onCreate");
+        sqlHelper  = new SqLiteHelper(this);
+        database = sqlHelper.getWritableDatabase();
 
         setContentView(R.layout.activity_main);
 
         Button beamData = findViewById(R.id.beamData);
         beamData.setOnClickListener( _onBeamClick );
+
+        Button load = findViewById(R.id.load);
+        load.setOnClickListener(_onAddMoney);
+
+        Button balance = findViewById(R.id.balance);
+        balance.setOnClickListener(_onGetBalance);
     }
 
 
@@ -79,19 +94,23 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i(TAG, "message size = " + messages.length);
 
-            TextView veiw = findViewById(R.id.viewdata);
-            if ( veiw != null ) {
-                // only one message sent during the beam
-                NdefMessage msg = (NdefMessage) rawMessages[0];
-                // record 0 contains the MIME type, record 1 is the AAR, if present
-                String base = new String(msg.getRecords()[0].getPayload());
-                String str = String.format(Locale.getDefault(), "Message entries=%d. Base message is %s", rawMessages.length, base);
-                veiw.setText(str);
-            }
+            // only one message sent during the beam
+            NdefMessage msg = (NdefMessage) rawMessages[0];
+            // record 0 contains the MIME type, record 1 is the AAR, if present
+            String base = new String(msg.getRecords()[0].getPayload());
+
+            sqlHelper.addBalance( Integer.parseInt(base) );
+
+            displayCurrentBalance();
 
         }
     }
-    private void setDisplayText ( String text ) {
+
+    private void displayCurrentBalance( ) {
+        setDisplayText("Current Money: " + sqlHelper.getCurrentBalance() );
+    }
+
+    private void setDisplayText( String text ) {
         TextView veiw = findViewById(R.id.viewdata);
         if ( veiw != null ) {
             veiw.setText(text);
@@ -107,6 +126,28 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+    private View.OnClickListener _onAddMoney = new View.OnClickListener() {
+        @Override
+        public void onClick(View inputView) {
+            Log.i(TAG, "_onAddMoneyClick onClick");
+
+            EditText loadAmount = findViewById(R.id.loadAmount);
+            int addAmount = Integer.valueOf(loadAmount.getText().toString());
+
+            sqlHelper.addBalance(addAmount);
+            setDisplayText("New Balance: " + sqlHelper.getCurrentBalance() );
+        }
+    };
+
+    private View.OnClickListener _onGetBalance = new View.OnClickListener() {
+        @Override
+        public void onClick(View inputView) {
+            Log.i(TAG, "_onGetMoneyClick onClick");
+
+            displayCurrentBalance();
+        }
+    };
 
     /* **************************************************************
         This will create the NFC Adapter, if available,
@@ -136,8 +177,12 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private NdefMessage createMessage() {
-        String text = ("Hello there from another device!\n\n" +
-                "Beam Time: " + System.currentTimeMillis());
+        EditText editText = findViewById(R.id.send);
+
+        String text = editText.getText().toString();
+        sqlHelper.addBalance(-1 * Integer.parseInt(text) );
+        displayCurrentBalance();
+
         NdefMessage msg = new NdefMessage(
                 new NdefRecord[] { NdefRecord.createMime(
                         "application/com.bluefletch.nfcdemo.mimetype", text.getBytes())
