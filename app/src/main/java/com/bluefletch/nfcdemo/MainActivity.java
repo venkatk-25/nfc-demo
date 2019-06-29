@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
         super.onCreate(savedInstanceState);
 
         Log.i(TAG, "onCreate");
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         logsDatabase = sqlHelper.getWritableDatabase();
 
         displayCurrentBalance();
+        displayCurrentLog();
 
         setContentView(R.layout.activity_main);
 
@@ -62,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onNewIntent");
 
         displayCurrentBalance();
+        displayCurrentLog();
         if (intent != null && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             processNFCData(intent);
         }
@@ -74,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(TAG, "onResume");
         displayCurrentBalance();
+        displayCurrentLog();
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processNFCData(getIntent());
@@ -106,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             sqlHelper.addBalance( Integer.parseInt(base) );
             displayCurrentBalance();
 
-            logSqLiteHelper.addLog("Received " + Integer.parseInt(base) + " by Tap. New Balance: " + sqlHelper.getCurrentBalance());
+            logSqLiteHelper.addLog("Received ₹" + Integer.parseInt(base) + " by Tap. Balance: ₹" + sqlHelper.getCurrentBalance());
             displayCurrentLog();
 
             resetBalance();
@@ -121,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     private void displayBalance( int text ) {
         TextView view = findViewById(R.id.balanceValue);
         if ( view != null ) {
-            view.setText(Integer.toString(text));
+            view.setText("₹" + Integer.toString(text));
         }
     }
 
@@ -177,26 +184,25 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "_onAddMoneyClick onClick");
 
             EditText loadAmount = findViewById(R.id.loadAmount);
-            int addAmount = Integer.valueOf(loadAmount.getText().toString());
+            int addAmount = 0;
+
+            if(!loadAmount.getText().toString().equals("")) {
+                addAmount = Integer.valueOf(loadAmount.getText().toString());
+            }
+            else {
+                return;
+            }
 
             sqlHelper.addBalance(addAmount);
             displayCurrentBalance();
 
-            logSqLiteHelper.addLog("Added " + addAmount + " to the Wallet. New Balance: " + sqlHelper.getCurrentBalance());
+            logSqLiteHelper.addLog("Added ₹" + addAmount + " to Wallet. Balance: ₹" + sqlHelper.getCurrentBalance());
             displayCurrentLog();
 
             resetLoadAmount();
         }
     };
 
-    private View.OnClickListener _onGetBalance = new View.OnClickListener() {
-        @Override
-        public void onClick(View inputView) {
-            Log.i(TAG, "_onGetMoneyClick onClick");
-
-            displayCurrentBalance();
-        }
-    };
 
     /* **************************************************************
         This will create the NFC Adapter, if available,
@@ -232,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         sqlHelper.addBalance(-1 * Integer.parseInt(text) );
         displayCurrentBalance();
 
-        logSqLiteHelper.addLog("Sent " + text + " by Tap. New Balance: " + sqlHelper.getCurrentBalance());
+        logSqLiteHelper.addLog("Sent ₹" + text + " by Tap. Balance: ₹" + sqlHelper.getCurrentBalance());
         displayCurrentLog();
 
         resetBalance();

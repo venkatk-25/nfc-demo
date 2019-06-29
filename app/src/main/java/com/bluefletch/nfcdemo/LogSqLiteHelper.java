@@ -25,29 +25,43 @@ public class LogSqLiteHelper extends SQLiteOpenHelper {
     }
 
     public String getCurrentLogs() {
-        Cursor cursor = this.getReadableDatabase().rawQuery("select logs from tappay_logs order by id desc limit 1", null);
-        cursor.moveToNext();
-        String currLogs;
-        if(cursor.getCount() > 0 ) {
-            currLogs = cursor.getString(0);
+        Cursor cursor = this.getReadableDatabase().rawQuery("select logs from tappay_logs order by id desc limit 5", null);
+//        cursor.moveToNext();
+        String currLogs = "";
+        int cursorCount = cursor.getCount();
+        System.out.println("cursorCount=" + cursorCount);
+//        System.out.println("cursorString=" + cursor.getString(0));
+        int count = 0;
+        if(cursorCount > 0 ) {
+            while(cursor.moveToNext()) {
+                if(count!=0) {
+                    System.out.println("inside If");
+                    currLogs = currLogs + "\n" + cursor.getString(0);
+                    count++;
+                }
+                else {
+                    System.out.println("inside else");
+                    currLogs = cursor.getString(0);
+                    count++;
+                }
+                System.out.println("currLogs=" + currLogs);
+            }
         }
-        else {
-            currLogs = "";
-        }
+        cursor.close();
         System.out.println("LOGS=" + currLogs);
         return currLogs;
     }
 
     public void addLog(String newLog) {
-        String oldLog = getCurrentLogs();
-        String finalLog;
-        if(oldLog.equals("")) {
-            finalLog = "\"" + newLog + "\"";
-        }
-        else {
-            finalLog = "\"" + oldLog + "\n" + newLog + "\"";
-        }
-        System.out.println("FINAL LOGS=" + finalLog);
-        this.getWritableDatabase().execSQL("insert into tappay_logs ( logs ) values(" + finalLog + ")");
+//        String oldLog = getCurrentLogs();
+//        String finalLog;
+//        if(oldLog.equals("")) {
+//            finalLog = "\"" + newLog + "\"";
+//        }
+//        else {
+//            finalLog = "\"" + oldLog + "\n" + newLog + "\"";
+//        }
+        System.out.println("FINAL LOGS=" + newLog);
+        this.getWritableDatabase().execSQL("insert into tappay_logs ( logs ) values(\"" + newLog + "\")");
     }
 }

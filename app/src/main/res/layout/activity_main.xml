@@ -4,9 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF9800"
+    android:background="#FFFFFF"
     tools:context=".MainActivity">
 
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="30dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="180dp"
+        app:srcCompat="@drawable/rupees2" />
 
     <Button
         android:id="@+id/beamData"
@@ -14,43 +22,45 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="279dp"
-        android:layout_marginTop="215dp"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="250dp"
+        android:width="340dp"
+        android:background="#1B81FF"
         android:text="Tap to Pay"
-        android:textColor="#3F51B5"
-        android:textColorHint="#C45757" />
+        android:textColor="#D6E6E7" />
 
     <EditText
         android:id="@+id/send"
-        android:layout_width="213dp"
-        android:layout_height="41dp"
+        android:layout_width="300dp"
+        android:layout_height="61dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="37dp"
-        android:layout_marginTop="220dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="180dp"
+        android:width="340dp"
         android:height="300dp"
-        android:background="#CECFCF"
         android:ems="10"
-        android:fontFamily="casual"
-        android:inputType="numberDecimal"
-        android:shadowColor="#213292"
-        android:textAlignment="center"
-        android:textColor="#3F51B5" />
+        android:fontFamily="@font/fira_sans"
+        android:includeFontPadding="true"
+        android:inputType="textNoSuggestions|number"
+        android:textAlignment="viewStart"
+        android:textColor="#3D3C3C"
+        android:textSize="38sp" />
 
     <EditText
         android:id="@+id/loadAmount"
-        android:layout_width="220dp"
-        android:layout_height="41dp"
+        android:layout_width="300dp"
+        android:layout_height="58dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="159dp"
-        android:layout_marginTop="615dp"
-        android:background="#CECFCF"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="570dp"
         android:ems="10"
-        android:fontFamily="casual"
-        android:inputType="numberDecimal"
-        android:textAlignment="center"
-        android:textColor="#3F51B5" />
+        android:fontFamily="@font/fira_sans"
+        android:inputType="number"
+        android:textAlignment="viewStart"
+        android:textColor="#3D3C3C"
+        android:textSize="35sp" />
 
     <Button
         android:id="@+id/load"
@@ -58,50 +68,76 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="609dp"
-        android:layout_marginEnd="273dp"
         android:layout_marginStart="37dp"
-        android:textColor="#3F51B5"
-        android:text=" Load Wallet" />
+        android:layout_marginTop="630dp"
+        android:layout_marginEnd="38dp"
+        android:width="340dp"
+        android:background="#1B81FF"
+        android:text=" Load Wallet"
+        android:textColor="#D6E6E7" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="30dp"
         android:width="120dp"
-        android:height="40dp"
-        android:fontFamily="casual"
+        android:height="50dp"
+        android:fontFamily="@font/fira_sans_light"
         android:includeFontPadding="true"
-        android:text="BALANCE"
+        android:text="Balance"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="#3F51B5" />
+        android:textColor="#929292"
+        android:textSize="40sp" />
 
     <TextView
         android:id="@+id/balanceValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="155dp"
-        android:layout_marginTop="140dp"
-        android:width="100dp"
-        android:height="40dp"
-        android:fontFamily="casual"
-        android:text="123"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="80dp"
+        android:width="220dp"
+        android:height="50dp"
+        android:fontFamily="@font/fira_sans_light"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="#3F51B5" />
+        android:textColor="#0B0B0B"
+        android:textSize="40sp" />
 
     <TextView
         android:id="@+id/logs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#CECFCF"
-        android:fontFamily="casual"
         android:layout_marginStart="37dp"
-        android:layout_marginTop="310dp"
+        android:layout_marginTop="390dp"
         android:width="340dp"
-        android:height="250dp" />
+        android:height="115dp"
+        android:background="#D6ECF7"
+        android:fontFamily="@font/fira_sans"
+        android:textColor="#1B81FF"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="30dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="570dp"
+        app:srcCompat="@drawable/rupees2" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="360dp"
+        android:width="340dp"
+        android:height="30dp"
+        android:text="Last 5 Transactions"
+        android:textAlignment="center"
+        android:textColor="#1B81FF"
+        android:textSize="20sp" />
 
 </RelativeLayout>
