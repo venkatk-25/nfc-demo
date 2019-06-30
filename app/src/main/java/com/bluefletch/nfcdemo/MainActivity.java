@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         displayCurrentBalance();
         displayCurrentLog();
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
 
         Button beamData = findViewById(R.id.beamData);
         beamData.setOnClickListener( _onBeamClick );

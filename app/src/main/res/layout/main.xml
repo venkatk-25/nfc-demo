@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    >
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/fira_sans_light"
+        android:includeFontPadding="true"
+        android:text="Balance"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#929292"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/balanceValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:fontFamily="@font/fira_sans_light"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#0B0B0B"
+        android:textSize="40sp" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="180dp"
+        android:paddingHorizontal="30dp">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="18dp"
+            android:layout_height="61dp"
+            android:layout_gravity="right"
+            android:layout_weight="0.3"
+            app:srcCompat="@drawable/rupees2" />
+
+        <EditText
+            android:id="@+id/send"
+            android:layout_width="300dp"
+            android:layout_height="61dp"
+            android:layout_weight="0.7"
+            android:layout_alignParentTop="true"
+            android:ems="10"
+            android:fontFamily="@font/fira_sans"
+            android:includeFontPadding="true"
+            android:inputType="textNoSuggestions|number"
+            android:textAlignment="viewStart"
+            android:textColor="#3D3C3C"
+            android:textSize="38sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/beamData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="250dp"
+        android:width="340dp"
+        android:background="#1B81FF"
+        android:text="Tap to Pay"
+        android:textColor="#D6E6E7" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="360dp"
+        android:width="340dp"
+        android:text="Last 5 Transactions"
+        android:textAlignment="center"
+        android:textColor="#1B81FF"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/logs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="390dp"
+        android:width="340dp"
+        android:height="115dp"
+        android:background="#D6ECF7"
+        android:fontFamily="@font/fira_sans"
+        android:textColor="#1B81FF"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/logs"
+        android:layout_marginTop="60dp"
+        android:baselineAligned="false"
+        android:paddingHorizontal="30dp">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="18dp"
+            android:layout_height="61dp"
+            android:layout_gravity="right"
+            android:layout_weight="0.3"
+            app:srcCompat="@drawable/rupees2" />
+
+        <EditText
+            android:id="@+id/loadAmount"
+            android:layout_width="300dp"
+            android:layout_height="58dp"
+            android:layout_weight="0.7"
+            android:layout_alignParentTop="true"
+            android:ems="10"
+            android:fontFamily="@font/fira_sans"
+            android:inputType="number"
+            android:textAlignment="viewStart"
+            android:textColor="#3D3C3C"
+            android:textSize="35sp" />
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/load"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="630dp"
+        android:layout_marginEnd="38dp"
+        android:width="340dp"
+        android:background="#1B81FF"
+        android:text=" Load Wallet"
+        android:textColor="#D6E6E7"
+        android:layout_marginBottom="20dp"/>
+
+
+</RelativeLayout>
+</ScrollView>
